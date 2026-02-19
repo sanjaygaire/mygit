@@ -12,9 +12,32 @@ class GitRepo:
         self.mygit_path = base_path / ".mygit"
         self.objects_path = self.mygit_path / "objects"
         self.refs_path = self.mygit_path / "refs"
-
+        self.heads_path= self.refs_path / "heads"
+        self.tags_path= self.refs_path / "tags"
+        self.HEAD_path= self.mygit_path
     def init(self):
-        ...
+        try:
+            self.mygit_path.mkdir(exist_ok=True)
+            self.objects_path.mkdir(exist_ok=True)
+            self.refs_path.mkdir(exist_ok=True)
+            self.heads_path.mkdir(exist_ok=True)
+            self.tags_path.mkdir(exist_ok=True)
+
+            head_file=self.mygit_path / "HEAD"
+            with head_file.open("w") as f :
+                f.write('ref: refs/heads/main \n')
+            print('Mygit sucessfully initialized!')
+        except Exception as e :
+            print(f'Error: {e} ') 
+            print('error creating files')
+
+            sys.exit()
+    def add(self, args):
+        print("add")
+    def commit(self, args):
+        print("commit")
+    def logs(self, args):
+        print("logs")
 def main():
     parser = argparse.ArgumentParser(
         description="""This is my implementation of git.
@@ -22,12 +45,13 @@ def main():
     )
     subparsers = parser.add_subparsers(dest='command', title='Commands')
 
-    init_parser = subparsers.add_parser('init')
-    add_parser = subparsers.add_parser('add')
+    init_parser = subparsers.add_parser('init', help="Initialize repo")
+    add_parser = subparsers.add_parser('add' , help='add file/files to track them')
     add_parser.add_argument('path')
-    commit_parser = subparsers.add_parser('commit')
-    commit_parser.add_argument('-m')
-    logs_parser = subparsers.add_parser('logs')
+    commit_parser = subparsers.add_parser('commit', help='Record changes')
+    commit_parser.add_argument('-m','--message',required=True,help='message you want for this commit')
+    logs_parser = subparsers.add_parser('logs', help='show log  history')
+
 
     args = parser.parse_args()
     git = GitRepo()
