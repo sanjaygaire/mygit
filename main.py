@@ -1,7 +1,7 @@
 import sys
 import argparse
 from pathlib import Path
-
+from blob import create_blob
 class GitRepo:
     def __init__(self, path='.'):
         if path == '.' or path.strip() == '':
@@ -15,8 +15,15 @@ class GitRepo:
         self.heads_path= self.refs_path / "heads"
         self.tags_path= self.refs_path / "tags"
         self.HEAD_path= self.mygit_path
+        self.index_path = self.mygit_path
     def init(self):
         try:
+            if self.mygit_path.exists():
+                if (self.HEAD_path / 'HEAD').exists():
+                    print(f'''
+                        Mygit already initialized at {self.mygit_path}
+                    ''')
+                    sys.exit()
             self.mygit_path.mkdir(exist_ok=True)
             self.objects_path.mkdir(exist_ok=True)
             self.refs_path.mkdir(exist_ok=True)
@@ -38,6 +45,9 @@ class GitRepo:
         print("commit")
     def logs(self, args):
         print("logs")
+
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="""This is my implementation of git.
